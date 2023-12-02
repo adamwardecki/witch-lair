@@ -1,12 +1,27 @@
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Leva } from 'leva'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { ACESFilmicToneMapping, sRGBEncoding } from 'three'
 import { Scene } from './Scene'
 import './styles/main.css'
+import { useControls } from 'leva'
+
+const Camera = (props) => {
+  const ref = useRef()
+  const set = useThree((state) => state.set)
+  useEffect(() => void set({ camera: ref.current }), [])
+  useFrame(() => ref.current.updateMatrixWorld())
+  return <perspectiveCamera ref={ref} {...props} />
+}
 
 function Main() {
+  const { fov, near, far, position } = useControls('Camera', {
+    fov: 55,
+    near: 0.1,
+    far: 200,
+    position: [8, 9, -12],
+  })
+
   return (
     <div className='main'>
       <Leva
@@ -23,20 +38,23 @@ function Main() {
         }}
       />
       <Canvas
+        flat
         dpr={[1, 2]}
         gl={{
           antialias: true,
-          toneMapping: ACESFilmicToneMapping,
-          outputEncoding: sRGBEncoding,
         }}
         camera={{
-          fov: 55,
-          near: 0.1,
-          far: 200,
-          position: [3, 2, 9],
+          fov,
+          near,
+          far,
+          position,
         }}
-        shadows
       >
+        {/* 
+          The camera component is creating a non-perspective camera by default
+          It changes only after manipulating the camera controls in leva
+        */}
+        {/* <Camera fov={fov} near={near} far={far} position={position} /> */}
         <Scene />
       </Canvas>
     </div>
