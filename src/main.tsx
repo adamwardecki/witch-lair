@@ -1,4 +1,5 @@
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
+import { Environment } from '@react-three/drei'
 import { Leva } from 'leva'
 import React, { useRef, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
@@ -21,6 +22,8 @@ function Main() {
     far: 200,
     position: [8, 9, -12],
   })
+
+  const envProps = useControls({ background: false })
 
   return (
     <div className='main'>
@@ -50,6 +53,10 @@ function Main() {
           position,
         }}
       >
+        <ambientLight intensity={10} />
+
+        <Environment {...envProps} files='./models/adams-place-bridge-1k.hdr' />
+
         {/* 
           The camera component is creating a non-perspective camera by default
           It changes only after manipulating the camera controls in leva
