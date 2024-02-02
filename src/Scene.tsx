@@ -14,25 +14,9 @@ import { Fire } from './components/Fire'
 import { CustomGeometryParticles } from './components/Particles'
 import { Witch } from './components/Witch'
 import { useSound } from 'use-sound'
+import { Ruby } from './components/Ruby'
 
 extend({ UnrealBloomPass, OutputPass })
-
-function Ruby(props) {
-  const materialProps = useControls('ruby', {
-    roughness: { value: 0.1, min: 0, max: 1, step: 0.1 },
-    metalness: { value: 0.9, min: 0, max: 1, step: 0.1 },
-    envMapIntensity: { value: 7, min: 0, max: 100, step: 1 },
-    color: '#830000',
-    flatShading: true,
-    transparent: true,
-    opacity: { value: 0.8, min: 0, max: 1, step: 0.1 },
-  })
-  return (
-    <mesh {...props.ruby}>
-      <meshStandardMaterial {...materialProps} />
-    </mesh>
-  )
-}
 
 const Shape = forwardRef(function Shape(
   { children, color, crystalBallGlowIntensity, ...props },
@@ -218,7 +202,7 @@ function Scene() {
         <meshStandardMaterial {...bluePotionProps} />
       </mesh>
 
-      <Ruby ruby={nodes.Ruby003} />
+      <Ruby name='ruby' ruby={nodes.Ruby003} />
     </group>
   )
 }
