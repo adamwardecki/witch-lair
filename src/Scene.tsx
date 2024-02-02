@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { useState, forwardRef, useRef } from 'react'
 import { extend, useFrame } from '@react-three/fiber'
-import { OrbitControls, useGLTF, useTexture, Effects } from '@react-three/drei'
+import { OrbitControls, useGLTF, useTexture } from '@react-three/drei'
 import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
 import { useSpring, animated, config } from '@react-spring/three'
 
@@ -11,7 +11,7 @@ import { ToneMappingMode } from 'postprocessing'
 import { UnrealBloomPass } from 'three-stdlib'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 import { Fire } from './components/Fire'
-import { Swarm, CustomGeometryParticles, ParticleSystem } from './components/Swarm'
+import { CustomGeometryParticles } from './components/Particles'
 
 extend({ UnrealBloomPass, OutputPass })
 
@@ -58,7 +58,17 @@ function Scene() {
     performance: false,
   })
 
+  // @TODO: move the texture/model loading out of the Scene if possible
   const { nodes } = useGLTF('./models/witch-2.glb')
+  const { nodes: witch } = useGLTF('./models/witch-full.glb')
+
+  const bakedTexture = useTexture('./models/witch-baked-8.jpg')
+  const witchTexture = useTexture('./models/witch-full.jpg')
+  bakedTexture.colorSpace = THREE.SRGBColorSpace
+  bakedTexture.flipY = false
+
+  witchTexture.colorSpace = THREE.SRGBColorSpace
+  witchTexture.flipY = false
 
   const { intensity, radius } = useControls('crystall ball glow', {
     intensity: { value: 0.4, min: 0, max: 1.5, step: 0.01 },
@@ -93,11 +103,6 @@ function Scene() {
     opacity: { value: 0.9, min: 0, max: 1, step: 0.1 },
   })
 
-  const bakedTexture = useTexture('./models/witch-baked-6.jpg')
-  bakedTexture.colorSpace = THREE.SRGBColorSpace
-
-  bakedTexture.flipY = false
-
   const [isCrystalBallActive, setDataCrystalBallIsActive] = useState(false)
 
   const setIsCrystalBallActive = () => {
@@ -110,9 +115,9 @@ function Scene() {
   })
 
   const crystalBallShape = useRef()
-  useFrame(({ clock }) => {
+  useFrame((state, delta) => {
     if (isCrystalBallActive) {
-      crystalBallShape.current.rotation.x = clock.getElapsedTime()
+      crystalBallShape.current.rotation.x += delta
     }
   })
 
@@ -143,13 +148,18 @@ function Scene() {
             />
           </EffectComposer>
 
-          {/* <Swarm count={1000} /> */}
-          {/* <ParticleSystem count={1000} /> */}
           <CustomGeometryParticles count={1000} />
         </>
       )}
 
       <Fire position={[2.25, 0.6, 3.3]} color={'#f98bff'}></Fire>
+
+      <mesh
+        geometry={witch['character_witch002'].geometry}
+        position={witch['character_witch002'].position}
+      >
+        <meshBasicMaterial map={witchTexture} />
+      </mesh>
 
       <Shape
         ref={crystalBallShape}
