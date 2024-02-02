@@ -12,6 +12,8 @@ import { UnrealBloomPass } from 'three-stdlib'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 import { Fire } from './components/Fire'
 import { CustomGeometryParticles } from './components/Particles'
+import { Witch } from './components/Witch'
+import { useSound } from 'use-sound'
 
 extend({ UnrealBloomPass, OutputPass })
 
@@ -58,17 +60,27 @@ function Scene() {
     performance: false,
   })
 
+  const [playFireplaceSounds] = useSound('sounds/fireplace-fx-56636.mp3', {
+    volume: 0.08,
+    loop: true,
+  })
+
+  playFireplaceSounds()
+
+  const soundUrl = 'sounds/shimmering-object-79354.mp3'
+
+  const [playMagicSound, { stop: stopMagicSound }] = useSound(soundUrl, {
+    volume: 0.6,
+    interrupt: true,
+  })
+
   // @TODO: move the texture/model loading out of the Scene if possible
   const { nodes } = useGLTF('./models/witch-2.glb')
-  const { nodes: witch } = useGLTF('./models/witch-full.glb')
 
   const bakedTexture = useTexture('./models/witch-baked-8.jpg')
-  const witchTexture = useTexture('./models/witch-full.jpg')
+
   bakedTexture.colorSpace = THREE.SRGBColorSpace
   bakedTexture.flipY = false
-
-  witchTexture.colorSpace = THREE.SRGBColorSpace
-  witchTexture.flipY = false
 
   const { intensity, radius } = useControls('crystall ball glow', {
     intensity: { value: 0.4, min: 0, max: 1.5, step: 0.01 },
@@ -107,6 +119,8 @@ function Scene() {
 
   const setIsCrystalBallActive = () => {
     setDataCrystalBallIsActive(!isCrystalBallActive)
+
+    isCrystalBallActive ? stopMagicSound() : playMagicSound()
   }
 
   const { scale } = useSpring({
@@ -154,12 +168,7 @@ function Scene() {
 
       <Fire position={[2.25, 0.6, 3.3]} color={'#f98bff'}></Fire>
 
-      <mesh
-        geometry={witch['character_witch002'].geometry}
-        position={witch['character_witch002'].position}
-      >
-        <meshBasicMaterial map={witchTexture} />
-      </mesh>
+      <Witch />
 
       <Shape
         ref={crystalBallShape}

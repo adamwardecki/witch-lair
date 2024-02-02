@@ -53,8 +53,6 @@ function Main() {
           position,
         }}
       >
-        <ambientLight intensity={10} />
-
         <Environment {...envProps} files='./models/adams-place-bridge-1k.hdr' />
 
         {/* 
