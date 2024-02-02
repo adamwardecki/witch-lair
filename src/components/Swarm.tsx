@@ -76,86 +76,7 @@ export function Swarm({
   )
 }
 
-// export const CustomGeometryParticles = (props) => {
-//   const { count } = props
-
-//   // This reference gives us direct access to our points
-//   const points = useRef()
-
-//   // Generate our positions attributes array
-//   const particlesStuff = useMemo(() => {
-//     const positions = new Float32Array(count * 3)
-//     const attributes = new Float32Array(count * 3)
-//     const distance = 1
-
-//     // for (let i = 0; i < count; i++) {
-//     //   const theta = THREE.MathUtils.randFloatSpread(360)
-//     //   const phi = THREE.MathUtils.randFloatSpread(360)
-
-//     //   let x = distance * Math.sin(theta) * Math.cos(phi)
-//     //   let y = distance * Math.sin(theta) * Math.sin(phi)
-//     //   let z = distance * Math.cos(theta)
-
-//     //   positions.set([x, y, z], i * 3)
-//     // }
-
-//     var num = 24
-
-//     var angle = (Math.PI * 0.5) / num
-
-//     for (let i = 0; i < count; i++) {
-//       const xFactor = Math.sin(i * angle) * 8
-//       const yFactor = Math.cos(i * angle) * 8
-//       const zFactor = Math.cos(i)
-
-//       positions.set([xFactor, yFactor, zFactor], i * 3)
-//     }
-
-//     return { positions, attributes }
-//   }, [count])
-
-//   const { swarmX, swarmY, swarmZ } = useControls('SwarmRotation', {
-//     swarmX: { value: 2.1, step: 0.01 },
-//     swarmY: { value: 0.5, step: 0.01 },
-//     swarmZ: { value: 0, step: 0.01 },
-//   })
-
-//   useFrame((state) => {
-//     const { clock } = state
-//     var num = 24
-
-//     var angle = (Math.PI * 0.5) / num
-//     for (let i = 0; i < count; i++) {
-//       const i3 = i * 3
-
-//       // points.current.geometry.attributes.position.array[i3] += Math.cos(angle)
-//       // points.current.geometry.attributes.position.array[i3 + 1] += Math.sin(angle)
-//       points.current.geometry.attributes.position.array[i3] +=
-//         Math.cos(clock.elapsedTime * Math.random()) * 0.001
-//       points.current.geometry.attributes.position.array[i3 + 1] +=
-//         Math.cos(clock.elapsedTime * Math.random()) * 0.001
-//       // points.current.geometry.attributes.position.array[i3 + 2] +=
-//       //   Math.cos(clock.elapsedTime * Math.random()) * 0.01
-
-//       // particle.applyAxisAngle(particle.rotationAxis, 0.01)
-//     }
-//     points.current.geometry.attributes.position.needsUpdate = true
-//   })
-
-//   return (
-//     <points ref={points} rotation={[swarmX, swarmY, swarmZ]}>
-//       <bufferGeometry>
-//         <bufferAttribute
-//           attach='attributes-position'
-//           count={particlesStuff.positions.length / 3}
-//           array={particlesStuff.positions}
-//           itemSize={3}
-//         />
-//       </bufferGeometry>
-//       <pointsMaterial size={0.12} color='#5786F5' sizeAttenuation depthWrite={false} />
-//     </points>
-//   )
-// }
+const particleTexture = new THREE.TextureLoader().load('/textures/magicparticle.png')
 
 export const CustomGeometryParticles = (props) => {
   const { count } = props
@@ -168,6 +89,7 @@ export const CustomGeometryParticles = (props) => {
     const radius = 7.5
     const particlesDelay = 1000
     const positions = new Float32Array(count * 3)
+    const alphas = new Float32Array(count)
     const vectors = []
 
     let theta = 0
@@ -194,11 +116,13 @@ export const CustomGeometryParticles = (props) => {
 
       vectors.push(vertex)
       positions.set([vertex.x, vertex.y, vertex.z], i * 3)
+      alphas[i] = Math.random()
     }
 
-    return { positions, vectors }
+    return { positions, vectors, alphas }
   }, [count])
 
+  console.log(particlesStuff.vectors[0])
   useFrame((state, delta) => {
     const positionsArray = points.current.geometry.attributes.position.array
 
@@ -212,6 +136,7 @@ export const CustomGeometryParticles = (props) => {
     }
 
     points.current.geometry.attributes.position.needsUpdate = true
+    points.current.geometry.attributes.alpha.needsUpdate = true
   })
 
   return (
@@ -223,8 +148,21 @@ export const CustomGeometryParticles = (props) => {
           array={particlesStuff.positions}
           itemSize={3}
         />
+        <bufferAttribute
+          attach='attributes-alpha'
+          count={particlesStuff.alphas.length}
+          array={particlesStuff.alphas}
+          itemSize={1}
+        />
       </bufferGeometry>
-      <pointsMaterial size={0.12} color='#5786F5' sizeAttenuation depthWrite={false} />
+      <pointsMaterial
+        size={0.12}
+        color='#aa49ff'
+        sizeAttenuation
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+        alphaMap={particleTexture}
+      />
     </points>
   )
 }
@@ -252,10 +190,6 @@ export const ParticleSystem = () => {
     for (let i = 0; i < 1000; i++) {
       theta = 2 * Math.PI * Math.random()
       phi = Math.acos(2 * Math.random() - 1)
-
-      // const px = radius * Math.cos(theta) * Math.sin(phi)
-      // const py = radius * Math.sin(theta) * Math.sin(phi)
-      // const pz = radius * Math.cos(phi)
 
       const px = Math.sin(i * angle) * radius
       const py = Math.cos(i * angle) * radius * 0.6
