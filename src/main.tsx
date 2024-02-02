@@ -1,9 +1,10 @@
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
 import { Leva } from 'leva'
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Scene } from './Scene'
+import { ProgressBar } from './components/Loader'
 import './styles/main.css'
 import { useControls } from 'leva'
 
@@ -60,7 +61,9 @@ function Main() {
           It changes only after manipulating the camera controls in leva
         */}
         {/* <Camera fov={fov} near={near} far={far} position={position} /> */}
-        <Scene />
+        <Suspense fallback={<ProgressBar />}>
+          <Scene />
+        </Suspense>
       </Canvas>
     </div>
   )
