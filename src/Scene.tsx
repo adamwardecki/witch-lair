@@ -42,7 +42,7 @@ function Scene() {
   )
 
   // @TODO: move the texture/model loading out of the Scene if possible
-  const { nodes } = useGLTF('./models/witch-2.glb')
+  const { nodes } = useGLTF('./models/scene.glb')
 
   const { intensity } = useControls('crystall ball glow', {
     intensity: { value: 0.4, min: 0, max: 1.5, step: 0.01 },

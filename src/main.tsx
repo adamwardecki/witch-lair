@@ -8,14 +8,6 @@ import { ProgressBar } from './components/Loader'
 import './styles/main.css'
 import { useControls } from 'leva'
 
-const Camera = (props) => {
-  const ref = useRef()
-  const set = useThree((state) => state.set)
-  useEffect(() => void set({ camera: ref.current }), [])
-  useFrame(() => ref.current.updateMatrixWorld())
-  return <perspectiveCamera ref={ref} {...props} />
-}
-
 function Main() {
   const { fov, near, far, position } = useControls('Camera', {
     fov: 55,
@@ -54,13 +46,8 @@ function Main() {
           position,
         }}
       >
-        <Environment {...envProps} files='./models/adams-place-bridge-1k.hdr' />
+        <Environment {...envProps} files='./textures/adams-place-bridge-1k.hdr' />
 
-        {/* 
-          The camera component is creating a non-perspective camera by default
-          It changes only after manipulating the camera controls in leva
-        */}
-        {/* <Camera fov={fov} near={near} far={far} position={position} /> */}
         <Suspense fallback={<ProgressBar />}>
           <Scene />
         </Suspense>

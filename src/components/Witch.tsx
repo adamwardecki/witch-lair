@@ -3,8 +3,8 @@ import { useGLTF, useTexture } from '@react-three/drei'
 import useSound from 'use-sound'
 
 export function Witch(props) {
-  const { nodes: witch } = useGLTF('./models/witch-full.glb')
-  const witchTexture = useTexture('./models/witch-full.jpg')
+  const { nodes: witch } = useGLTF('./models/witch.glb')
+  const witchTexture = useTexture('./textures/witch.jpg')
   witchTexture.colorSpace = THREE.SRGBColorSpace
   witchTexture.flipY = false
 
