@@ -23,8 +23,8 @@ export function MainModel(props) {
       <mesh
         geometry={wall['Plane002'].geometry}
         position={wall['Plane002'].position}
-        rotation={[0, 0, 1.57]}
-        scale={[2.57, 3, 3.95]}
+        rotation={[3.14, 3.14, 1.57]}
+        scale={[2.553, 2.3, 3.93]}
       >
         <meshBasicMaterial map={wallTexture} side={THREE.DoubleSide} />
       </mesh>
