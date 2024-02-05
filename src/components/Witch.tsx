@@ -1,9 +1,16 @@
 import * as THREE from 'three'
 import { useGLTF, useTexture } from '@react-three/drei'
 import useSound from 'use-sound'
+import { GLTF } from 'three-stdlib'
 
-export function Witch(props) {
-  const { nodes: witch } = useGLTF('./models/witch.glb')
+type GLTFResult = GLTF & {
+  nodes: {
+    character_witch002: THREE.Mesh
+  }
+}
+
+export function Witch() {
+  const { nodes: witch } = useGLTF('./models/witch.glb') as GLTFResult
   const witchTexture = useTexture('./textures/witch.jpg')
   witchTexture.colorSpace = THREE.SRGBColorSpace
   witchTexture.flipY = false

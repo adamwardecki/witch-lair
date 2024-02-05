@@ -1,10 +1,8 @@
 import * as THREE from 'three'
-import { useState, forwardRef, useRef } from 'react'
-import { extend, useFrame } from '@react-three/fiber'
-import { OrbitControls, useGLTF, useTexture } from '@react-three/drei'
+import { useState } from 'react'
+import { extend } from '@react-three/fiber'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
-import { useSpring, animated, config } from '@react-spring/three'
-
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
 import { ToneMappingMode } from 'postprocessing'
@@ -18,9 +16,20 @@ import { Ruby } from './components/Ruby'
 import { Potion } from './components/Potion'
 import { CrystalBall } from './components/CrystalBall'
 import { MainModel } from './components/MainModel'
+import { GLTF } from 'three-stdlib'
 
 extend({ UnrealBloomPass, OutputPass })
 
+type GLTFResultScene = GLTF & {
+  nodes: {
+    'baked-4': THREE.Mesh
+    CrystalBall: THREE.Mesh
+    Potion_Red003: THREE.Mesh
+    Potion_Green001: THREE.Mesh
+    Potion_Red004: THREE.Mesh
+    Ruby003: THREE.Mesh
+  }
+}
 function Scene() {
   const { performance } = useControls('Monitoring', {
     performance: false,
@@ -42,7 +51,7 @@ function Scene() {
   )
 
   // @TODO: move the texture/model loading out of the Scene if possible
-  const { nodes } = useGLTF('./models/scene.glb')
+  const { nodes } = useGLTF('./models/scene.glb') as GLTFResultScene
 
   const { intensity } = useControls('crystall ball glow', {
     intensity: { value: 0.4, min: 0, max: 1.5, step: 0.01 },
