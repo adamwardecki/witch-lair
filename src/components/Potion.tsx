@@ -1,4 +1,5 @@
 import { useControls } from 'leva'
+import useSound from 'use-sound'
 
 type PotionComponentProps = {
   mesh: any
@@ -41,8 +42,20 @@ export function Potion({ mesh, name }: PotionComponentProps) {
       blue: bluePotionProps,
     }[name] || greenPotionProps
 
+  const soundUrl = '/sounds/magnuswaker__potion-bubbles.mp3'
+
+  const [playPotionSounde] = useSound(soundUrl, { volume: 0.2, interrupt: true })
+
+  const onPotionClick = () => {
+    playPotionSounde()
+  }
+
   return (
-    <mesh geometry={mesh.geometry} position={mesh.position}>
+    <mesh
+      geometry={mesh.geometry}
+      position={mesh.position}
+      onClick={() => onPotionClick()}
+    >
       <meshStandardMaterial {...meshMaterialProps} />
     </mesh>
   )
