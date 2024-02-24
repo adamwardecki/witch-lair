@@ -13,7 +13,7 @@ function Main() {
     fov: 55,
     near: 0.1,
     far: 200,
-    position: [7, 7, -7],
+    position: [7.5, 7, -8],
   })
 
   const envProps = useControls({ background: false })

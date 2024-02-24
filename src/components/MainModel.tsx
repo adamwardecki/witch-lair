@@ -14,7 +14,6 @@ export function MainModel(props) {
   wallTexture.colorSpace = THREE.SRGBColorSpace
   wallTexture.flipY = false
 
-  console.log('wall', wall)
   return (
     <>
       <mesh geometry={mesh.geometry} position={mesh.position}>

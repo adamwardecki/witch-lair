@@ -17,6 +17,7 @@ import { Potion } from './components/Potion'
 import { CrystalBall } from './components/CrystalBall'
 import { MainModel } from './components/MainModel'
 import { GLTF } from 'three-stdlib'
+import { SmokeBlobs } from './components/SmokeBlobs'
 
 extend({ UnrealBloomPass, OutputPass })
 
@@ -67,7 +68,7 @@ function Scene() {
   }
 
   return (
-    <group position-z={-0.6}>
+    <group>
       {performance && <Perf position='top-left' />}
 
       <OrbitControls makeDefault />
@@ -111,6 +112,8 @@ function Scene() {
       <Potion name='blue' mesh={nodes.Potion_Red004} />
 
       <Ruby name='ruby' ruby={nodes.Ruby003} />
+
+      <SmokeBlobs />
     </group>
   )
 }

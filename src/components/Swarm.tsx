@@ -122,7 +122,6 @@ export const CustomGeometryParticles = (props) => {
     return { positions, vectors, alphas }
   }, [count])
 
-  console.log(particlesStuff.vectors[0])
   useFrame((state, delta) => {
     const positionsArray = points.current.geometry.attributes.position.array
 
