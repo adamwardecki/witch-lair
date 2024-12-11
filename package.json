@@ -11,7 +11,7 @@
   "dependencies": {
     "@react-spring/three": "^9.7.3",
     "@react-three/drei": "^9.80.4",
-    "@react-three/fiber": "^8.15.14",
+    "@react-three/fiber": "^8.15.16",
     "@react-three/postprocessing": "^2.15.12",
     "leva": "^0.9.35",
     "r3f-perf": "^7.1.2",
