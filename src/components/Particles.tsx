@@ -11,10 +11,10 @@ type CustomGeometryParticlesProps = {
 export const CustomGeometryParticles = (props: CustomGeometryParticlesProps) => {
   const { count = 1000, radius = 7.5 } = props
 
-  // This reference gives us direct access to our points
-  const points = useRef()
+  // This reference gives direct access to points
+  const points = useRef<THREE.Points>(null)
 
-  // Generate our positions attributes array
+  // Generate positions attributes array
   const particlesStuff = useMemo(() => {
     const particlesDelay = 1000
     const positions = new Float32Array(count * 3)
@@ -32,19 +32,19 @@ export const CustomGeometryParticles = (props: CustomGeometryParticlesProps) => 
       const py = radius * Math.sin(theta) * Math.sin(phi) * 0.6 // flatten the sphere
       const pz = radius * Math.cos(phi)
 
-      const vertex = new THREE.Vector3(px, py, pz)
-      vertex.delay = Date.now() + particlesDelay
-      vertex.rotationAxis = new THREE.Vector3(
-        Math.random() / 20,
-        Math.random() * 2 - 1,
-        0
-      )
-
-      vertex.rotationAxis.normalize()
-      vertex.rotationSpeed = Math.abs(Math.random() - 0.5)
+      const vertex = {
+        position: new THREE.Vector3(px, py, pz),
+        delay: Date.now() + particlesDelay,
+        rotationAxis: new THREE.Vector3(
+          Math.random() / 20,
+          Math.random() * 2 - 1,
+          0
+        ).normalize(),
+        rotationSpeed: Math.abs(Math.random() - 0.5),
+      }
 
       vectors.push(vertex)
-      positions.set([vertex.x, vertex.y, vertex.z], i * 3)
+      positions.set([vertex.position.x, vertex.position.y, vertex.position.z], i * 3)
       alphas[i] = Math.random()
     }
 
@@ -52,19 +52,20 @@ export const CustomGeometryParticles = (props: CustomGeometryParticlesProps) => 
   }, [count])
 
   useFrame((state, delta) => {
+    if (!points.current) return
     const positionsArray = points.current.geometry.attributes.position.array
 
     for (let i = 0; i < particlesStuff.vectors.length; i++) {
       const vector = particlesStuff.vectors[i]
-      vector.applyAxisAngle(vector.rotationAxis, vector.rotationSpeed * delta)
+      vector.position.applyAxisAngle(vector.rotationAxis, vector.rotationSpeed * delta)
 
-      positionsArray[i * 3] = vector.x
-      positionsArray[i * 3 + 1] = vector.y
-      positionsArray[i * 3 + 2] = vector.z
+      positionsArray[i * 3] = vector.position.x
+      positionsArray[i * 3 + 1] = vector.position.y
+      positionsArray[i * 3 + 2] = vector.position.z
     }
 
-    points.current.geometry.attributes.position.needsUpdate = true
     points.current.geometry.attributes.alpha.needsUpdate = true
+    points.current.geometry.attributes.position.needsUpdate = true
   })
 
   return (
