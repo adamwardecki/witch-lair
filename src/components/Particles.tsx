@@ -4,15 +4,18 @@ import * as THREE from 'three'
 
 const particleTexture = new THREE.TextureLoader().load('/textures/magicparticle.png')
 
-export const CustomGeometryParticles = (props) => {
-  const { count } = props
+type CustomGeometryParticlesProps = {
+  count?: number
+  radius?: number
+}
+export const CustomGeometryParticles = (props: CustomGeometryParticlesProps) => {
+  const { count = 1000, radius = 7.5 } = props
 
   // This reference gives us direct access to our points
   const points = useRef()
 
   // Generate our positions attributes array
   const particlesStuff = useMemo(() => {
-    const radius = 7.5
     const particlesDelay = 1000
     const positions = new Float32Array(count * 3)
     const alphas = new Float32Array(count)
@@ -81,7 +84,7 @@ export const CustomGeometryParticles = (props) => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.12}
+        size={0.2}
         color='#aa49ff'
         sizeAttenuation
         depthWrite={false}

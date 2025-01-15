@@ -42,7 +42,7 @@ export function Potion({ mesh, name }: PotionComponentProps) {
       blue: bluePotionProps,
     }[name] || greenPotionProps
 
-  const soundUrl = '/sounds/magnuswaker__potion-bubbles.mp3'
+  const soundUrl = '/sounds/potion-bubbles.mp3'
 
   const [playPotionSounde] = useSound(soundUrl, { volume: 0.2, interrupt: true })
 

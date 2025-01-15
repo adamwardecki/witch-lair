@@ -1,13 +1,8 @@
 import * as THREE from 'three'
-import { useState } from 'react'
-import { extend } from '@react-three/fiber'
+import { useEffect, useState } from 'react'
 import { OrbitControls, useGLTF } from '@react-three/drei'
-import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
-import { ToneMappingMode } from 'postprocessing'
-import { UnrealBloomPass } from 'three-stdlib'
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 import { Fire } from './components/Fire'
 import { CustomGeometryParticles } from './components/Particles'
 import { Witch } from './components/Witch'
@@ -18,8 +13,7 @@ import { CrystalBall } from './components/CrystalBall'
 import { MainModel } from './components/MainModel'
 import { GLTF } from 'three-stdlib'
 import { SmokeBlobs } from './components/SmokeBlobs'
-
-extend({ UnrealBloomPass, OutputPass })
+import { Cauldron } from './components/Cauldron'
 
 type GLTFResultScene = GLTF & {
   nodes: {
@@ -31,27 +25,58 @@ type GLTFResultScene = GLTF & {
     Ruby003: THREE.Mesh
   }
 }
+
+type Position = [number, number, number]
+export const firePosition: Position = [2.25, 0.6, 3.3]
+export const cauldronPosition: Position = [2.5, 0.95, -2.35]
 function Scene() {
   const { performance } = useControls('Monitoring', {
     performance: false,
   })
 
-  const [playFireplaceSounds] = useSound('sounds/fireplace-fx-56636.mp3', {
-    volume: 0.08,
-    loop: true,
+  useEffect(() => {
+    playFireplaceSounds()
+
+    return () => {
+      stopFireplaceSounds()
+    }
   })
 
-  playFireplaceSounds()
+  const [playFireplaceSounds, { stop: stopFireplaceSounds }] = useSound(
+    'sounds/fireplace-fx-56636.mp3',
+    {
+      volume: 0.08,
+      loop: true,
+    }
+  )
 
   const [playMagicSound, { stop: stopMagicSound }] = useSound(
     'sounds/shimmering-object-79354.mp3',
     {
-      volume: 0.6,
+      volume: 0.8,
       interrupt: true,
     }
   )
 
-  // @TODO: move the texture/model loading out of the Scene if possible
+  const [playBoilingSpaghettiSound, { stop: stopBoilingSpaghettiSound }] = useSound(
+    'sounds/boiling-spaghetti.mp3',
+    {
+      volume: 0.8,
+      interrupt: true,
+    }
+  )
+
+  const [smokeBlobsAmount, setSmokeBlobsAmount] = useState(20)
+  const onCauldronClicked = () => {
+    setSmokeBlobsAmount(100)
+    playBoilingSpaghettiSound()
+
+    setTimeout(() => {
+      setSmokeBlobsAmount(20)
+      stopBoilingSpaghettiSound()
+    }, 5000)
+  }
+
   const { nodes } = useGLTF('./models/scene.glb') as GLTFResultScene
 
   const { intensity } = useControls('crystall ball glow', {
@@ -83,37 +108,21 @@ function Scene() {
         crystalBallMesh={nodes.CrystalBall}
       />
 
-      {/* @TODO: I should avoid re-mounting the particles. visible prop is better  */}
-      {isCrystalBallActive && (
-        <>
-          <EffectComposer disableNormalPass>
-            <Bloom
-              mipmapBlur
-              luminanceThreshold={1}
-              levels={8}
-              intensity={intensity * 4}
-            />
-            <ToneMapping
-              blendFunction={THREE.AdditiveBlending}
-              mode={ToneMappingMode.ACES_FILMIC}
-            />
-          </EffectComposer>
+      {isCrystalBallActive && <CustomGeometryParticles count={1000} />}
 
-          <CustomGeometryParticles count={1000} />
-        </>
-      )}
-
-      <Fire position={[2.25, 0.6, 3.3]} color={'#f98bff'}></Fire>
+      <Fire position={firePosition} color={'#f98bff'}></Fire>
 
       <Witch />
+
+      <SmokeBlobs amount={smokeBlobsAmount} />
+
+      <Cauldron position={cauldronPosition} onClick={() => onCauldronClicked()} />
 
       <Potion name='red' mesh={nodes.Potion_Red003} />
       <Potion name='green' mesh={nodes.Potion_Green001} />
       <Potion name='blue' mesh={nodes.Potion_Red004} />
 
       <Ruby name='ruby' ruby={nodes.Ruby003} />
-
-      <SmokeBlobs />
     </group>
   )
 }
