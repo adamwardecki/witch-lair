@@ -11,9 +11,13 @@ function generateBlobs(blobsNumber: number) {
   const material = <meshBasicMaterial color={0xcecece} />
 
   for (let i = 0; i < blobsNumber; i++) {
-    const posY = -1.95 + Math.random() * 2.5
-    const posX = Math.random()
-    const posZ = Math.random()
+    const r = 0.2 * Math.sqrt(Math.random())
+    const theta = Math.random() * 2 * Math.PI
+
+    const posY = -1.5 + Math.random() * 2.5
+
+    const posX = r * Math.cos(theta)
+    const posZ = r * Math.sin(theta)
 
     blobs.push(
       <mesh
@@ -29,6 +33,10 @@ function generateBlobs(blobsNumber: number) {
   }
 
   return blobs
+}
+
+interface ChangeBlobsAmountParams {
+  blobNumber: number
 }
 
 export function SmokeBlobs({ amount }: { amount: number }) {
@@ -48,13 +56,15 @@ export function SmokeBlobs({ amount }: { amount: number }) {
     if (params.blobNumber === 100) {
       for (let i = 0; i < params.blobNumber; i++) {
         setTimeout(() => {
-          const [blob] = generateBlobs(1)
-
-          setBlobsArray((blobs) => [...blobs, blob])
+          setBlobsArray((blobs) => [...blobs, ...generateBlobs(1)])
         }, i * 20)
       }
     } else {
-      setBlobsArray(initialBlobs)
+      for (let i = params.blobNumber; i < blobsArray.length; i++) {
+        setTimeout(() => {
+          setBlobsArray((blobs) => blobs.slice(0, blobs.length - 1))
+        }, (blobsArray.length - i) * 20)
+      }
     }
   }, [params.blobNumber])
 
