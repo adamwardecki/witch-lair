@@ -1,17 +1,21 @@
-# Vite React Three Fiber (R3F) + TypeScript Template
+# 🧙🏻‍♀️ The Witch's lair
 
-<img width="600" alt="Screenshot 2023-03-08 at 1 07 17 PM" src="https://user-images.githubusercontent.com/3608140/223794572-c4b4020f-a855-43c5-937b-bef6ef85e03c.png">
+A 3D scene created with React Three Fiber.
 
-## 🔋 Includes
+You can enter the lair [here](https://witch-lair.vercel.app/), but beware of what you find!
 
-- [x] OrbitControls (Drei)
-- [x] PivotControls Gizmo (Drei)
-- [x] Debug UI with Leva
-- [x] Performance monitoring with R3F-perf
-- [x] Directional and Ambient Lights
-- [x] Shadows
+<img width="800" alt="Project Screenshot" src="./public/overview.gif">
 
-## 🕹️ Commands
+## 🔮 Ingridients
+
+- Use a mouse to rotate the scene
+- You can interact with certain elements. Try clicking one of these:
+  - 🔮 Crystal Ball
+  - 🍵 Cauldron
+  - 🧪 Magic potions
+  - 🧙🏻‍♀️ The Witch!
+
+## 🕹️ Dev Commands
 
 `npm i`
 
