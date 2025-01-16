@@ -32,6 +32,7 @@ function Main() {
             root: '10px',
           },
         }}
+        hidden={import.meta.env.PROD}
       />
       <Canvas
         flat
