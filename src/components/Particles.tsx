@@ -20,6 +20,8 @@ type ParticleVector = {
   rotationSpeed: number
 }
 
+type Timeout = ReturnType<typeof setTimeout>
+
 export const CustomGeometryParticles = ({
   count = 1000,
   radius = 7.5,
@@ -29,7 +31,7 @@ export const CustomGeometryParticles = ({
   const vectors = useRef<ParticleVector[]>([])
 
   useEffect(() => {
-    let timeoutIds: NodeJS.Timeout[] = []
+    let timeoutIds: Timeout[] = []
 
     for (let i = 0; i < count; i++) {
       timeoutIds.push(

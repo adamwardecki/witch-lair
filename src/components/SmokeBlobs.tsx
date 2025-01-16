@@ -35,10 +35,6 @@ function generateBlobs(blobsNumber: number) {
   return blobs
 }
 
-interface ChangeBlobsAmountParams {
-  blobNumber: number
-}
-
 export function SmokeBlobs({ amount }: { amount: number }) {
   const blobContainerRef = useRef<THREE.Mesh>(null!)
   const params = {

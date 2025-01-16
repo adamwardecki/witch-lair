@@ -4,8 +4,15 @@ import { useFrame } from '@react-three/fiber'
 import { useSpring, animated, config } from '@react-spring/three'
 import { useControls } from 'leva'
 
-const Shape = forwardRef(function Shape(
-  { children, color, crystalBallGlowIntensity, ...props },
+type ShapeProps = {
+  children: React.ReactNode
+  color: THREE.Color | string | number
+  crystalBallGlowIntensity: number
+  [key: string]: any
+}
+
+const Shape = forwardRef<THREE.Mesh, ShapeProps>(function Shape(
+  { children, color, crystalBallGlowIntensity, ...props }: ShapeProps,
   ref
 ) {
   return (
@@ -40,7 +47,7 @@ export function CrystalBall(props: CrystalBallProps) {
     radius: { value: 0, min: 0, max: 1, step: 0.01 },
   })
 
-  const crystalBallShape = useRef<THREE.Mesh>()
+  const crystalBallShape = useRef<THREE.Mesh>(null)
 
   const { scale } = useSpring({
     scale: isCrystalBallActive ? 100 : 1,
@@ -49,7 +56,9 @@ export function CrystalBall(props: CrystalBallProps) {
 
   useFrame((state, delta) => {
     if (isCrystalBallActive) {
-      crystalBallShape.current.rotation.x += delta
+      if (crystalBallShape.current) {
+        crystalBallShape.current.rotation.x += delta
+      }
     }
   })
 

@@ -1,6 +1,22 @@
 import { useControls } from 'leva'
+import {
+  BufferGeometry,
+  Material,
+  Mesh,
+  NormalBufferAttributes,
+  Object3DEventMap,
+} from 'three'
 
-export function Ruby(props) {
+interface RubyProps {
+  name: string
+  ruby: Mesh<
+    BufferGeometry<NormalBufferAttributes>,
+    Material | Material[],
+    Object3DEventMap
+  >
+}
+
+export function Ruby(props: RubyProps) {
   const materialProps = useControls(props.name, {
     roughness: { value: 0.1, min: 0, max: 1, step: 0.1 },
     metalness: { value: 0.9, min: 0, max: 1, step: 0.1 },

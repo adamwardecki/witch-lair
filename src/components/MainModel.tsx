@@ -1,7 +1,10 @@
 import { useGLTF, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
-export function MainModel(props) {
+type MainModelProps = {
+  mesh: THREE.Mesh
+}
+export function MainModel(props: MainModelProps) {
   const { mesh } = props
 
   const bakedTexture = useTexture('./textures/main-model.jpg')
@@ -9,7 +12,7 @@ export function MainModel(props) {
   bakedTexture.colorSpace = THREE.SRGBColorSpace
   bakedTexture.flipY = false
 
-  const { nodes: wall } = useGLTF('./models/wall.glb')
+  const { nodes: wall } = useGLTF('./models/wall.glb') as any
   const wallTexture = useTexture('./textures/wall.jpg')
   wallTexture.colorSpace = THREE.SRGBColorSpace
   wallTexture.flipY = false
