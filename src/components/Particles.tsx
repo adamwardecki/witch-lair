@@ -26,10 +26,13 @@ export const CustomGeometryParticles = ({
 }: CustomGeometryParticlesProps) => {
   const points = useRef<THREE.Points>(null)
   const positions = useRef(new Float32Array(count * 3))
-  const colors = useRef(new Float32Array(count * 4)) // RGB + Alpha
+  const colors = useRef(new Float32Array(count * 4)) // RGBA
+  const fadeStartTimes = useRef<number[]>([]) // Track start time for each particle
   const vectors = useRef<ParticleVector[]>([])
 
   useEffect(() => {
+    const currentTime = performance.now() // Capture current time for sequential delays
+
     for (let i = 0; i < count; i++) {
       const theta = 2 * Math.PI * Math.random()
       const phi = Math.acos(2 * Math.random() - 1)
@@ -53,8 +56,11 @@ export const CustomGeometryParticles = ({
 
       positions.current.set([px, py, pz], i * 3)
 
-      // Set initial color (purple with alpha = 0)
-      colors.current.set([0.67, 0.29, 1.0, 0], i * 4) // RGB (0-1) and Alpha
+      // Initialize colors with alpha = 0 (transparent)
+      colors.current.set([0.67, 0.29, 1.0, 0], i * 4) // RGB and Alpha
+
+      // Set staggered start time for fade-in
+      fadeStartTimes.current[i] = currentTime + i
     }
   }, [count, radius])
 
@@ -63,6 +69,7 @@ export const CustomGeometryParticles = ({
 
     const positionsArray = points.current.geometry.attributes.position.array
     const colorsArray = points.current.geometry.attributes.color.array
+    const currentTime = performance.now()
 
     vectors.current.forEach((vector, i) => {
       vector.position.applyAxisAngle(vector.rotationAxis, vector.rotationSpeed * delta)
@@ -70,10 +77,10 @@ export const CustomGeometryParticles = ({
       positionsArray[i * 3 + 1] = vector.position.y
       positionsArray[i * 3 + 2] = vector.position.z
 
-      // Gradually increase alpha value
+      // Sequential fade-in logic
       const alphaIndex = i * 4 + 3
-      if (colors.current[alphaIndex] < 1) {
-        colors.current[alphaIndex] += 0.01 // Adjust the speed of appearance
+      if (colors.current[alphaIndex] < 1 && currentTime >= fadeStartTimes.current[i]) {
+        colors.current[alphaIndex] += delta * 0.5 // Adjust fade-in speed
         colors.current[alphaIndex] = Math.min(colors.current[alphaIndex], 1) // Clamp to 1
       }
 
@@ -97,7 +104,7 @@ export const CustomGeometryParticles = ({
           attach='attributes-color'
           count={colors.current.length / 4}
           array={colors.current}
-          itemSize={4}
+          itemSize={4} // RGBA
         />
       </bufferGeometry>
       <pointsMaterial
